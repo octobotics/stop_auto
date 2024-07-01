@@ -7,7 +7,7 @@
 ros::Publisher cmd_vel_pub;
 
 
-// Function to call a Trigger service
+
 bool callTriggerService(const std::string& service_name) {
     ros::ServiceClient client = ros::NodeHandle().serviceClient<std_srvs::Trigger>(service_name);
     std_srvs::Trigger srv;
@@ -25,26 +25,26 @@ bool callTriggerService(const std::string& service_name) {
     }
 }
 
-// Callback for the primary service
+
 bool triggerCallback(std_srvs::Trigger::Request& req, std_srvs::Trigger::Response& res) {
-    // Call /terminate_program service
+   
     if (callTriggerService("/terminate_program")) {
         res.success = true;
         res.message = "Failed to call /terminate_program service.";
         return true;
     }
 
-    // Call /stop service
+
     if (callTriggerService("/stop")) {
         std_msgs::Int32 stop_msg;
         stop_msg.data = 0;
         cmd_vel_pub.publish(stop_msg);
         ROS_INFO("Published zero velocities to /skid_steer/cmd_vel");
 
-        ros::Duration(5.0).sleep();
+        ros::Duration(1.0).sleep();
         std::system("rosnode kill lateral_shift_controller");
 
-        ros::Duration(15.0).sleep();
+        ros::Duration(1.0).sleep();
         std::system("rosnode kill behavior_tree_node");
         res.success = true;
         res.message = "Failed to call /stop service.";
