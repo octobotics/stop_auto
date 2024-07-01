@@ -1,0 +1,6 @@
+<launch>
+    
+    <node pkg="stop_auto" type="trigger_service_node" name="trigger_service_node" output="screen">
+
+    </node>
+  </launch>
