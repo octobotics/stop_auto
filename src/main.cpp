@@ -36,16 +36,18 @@ bool triggerCallback(std_srvs::Trigger::Request& req, std_srvs::Trigger::Respons
 
 
     if (callTriggerService("/stop")) {
-        std_msgs::Int32 stop_msg;
-        stop_msg.data = 0;
-        cmd_vel_pub.publish(stop_msg);
-        ROS_INFO("Published zero velocities to /skid_steer/cmd_vel");
+        
+        std::system("rosnode kill behavior_tree_node");
 
         ros::Duration(1.0).sleep();
         std::system("rosnode kill lateral_shift_controller");
 
         ros::Duration(1.0).sleep();
-        std::system("rosnode kill behavior_tree_node");
+
+        std_msgs::Int32 stop_msg;
+        stop_msg.data = 0;
+        cmd_vel_pub.publish(stop_msg);
+        ROS_INFO("Published zero velocities to /skid_steer/cmd_vel");
         res.success = true;
         res.message = "Failed to call /stop service.";
         return true;
